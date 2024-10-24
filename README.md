@@ -54,7 +54,7 @@ memory-game/ │ ├── images/                 # Folder containing images us
 
 emailjs.send('your_service_id', 'your_template_id', templateParams)
 
-Game Logic
+## Game Logic
 
 The cards are shuffled at the start of each game.
 
@@ -65,7 +65,7 @@ If all pairs are matched, the game ends, and a congratulatory message with confe
 The game keeps track of moves and time taken to complete the game.
 
 
-Feedback Form
+## Feedback Form
 
 At the end of the game, players are prompted to send feedback:
 
@@ -74,7 +74,7 @@ The form captures the player's name and feedback message.
 Feedback is sent via EmailJS, and SweetAlert provides feedback on submission success or failure.
 
 
-Audio
+## Audio
 
 The game uses three audio effects:
 
@@ -85,7 +85,7 @@ Match sound: Played when a pair of cards is matched.
 Win sound: Played when the game is won.
 
 
-License
+## License
 
 This project is open-source and free to use.
 
