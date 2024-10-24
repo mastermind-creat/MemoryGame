@@ -1,0 +1,193 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1c1c1c; /* Darker background for better contrast */
+    color: #fff; /* White text for better readability */
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.game-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #282828; /* Dark background for game container */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+header {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #383838; /* Darker header background */
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+header:hover {
+    transform: scale(1.05); /* Slightly enlarge header on hover */
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+#confetti-canvas {
+    display: none; /* Initially hidden */
+    position: fixed; /* Fix the canvas to the viewport */
+    top: 0;          /* Align it to the top */
+    left: 0;         /* Align it to the left */
+    width: 100%;     /* Full width */
+    height: 100%;    /* Full height */
+    pointer-events: none; /* Prevent interaction with the canvas */
+    z-index: 10;     /* Make sure it sits above other elements */
+}
+.stats {
+    display: flex;
+    justify-content: space-around; /* Centering the stats */
+    align-items: center;
+    font-size: 18px;
+    color: #ffcc00; /* Icon color */
+    margin: 20px 0; /* Add margin for spacing */
+    padding: 10px;
+    border: 2px solid #ffcc00; /* Border around the stats box */
+    border-radius: 10px; /* Rounded corners */
+    background-color: rgba(255, 204, 0, 0.1); /* Light background */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Shadow effect */
+    animation: fadeIn 0.5s ease-in-out; /* Fade-in animation */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.stats div {
+    display: flex;
+    align-items: center;
+}
+
+.stats i {
+    margin-right: 8px; /* Space between icon and text */
+}
+
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.card {
+    background-color: black; /* Black background */
+    border: 0.5px solid yellow;   /* Red border */
+    border-radius: 5px;      /* Keep rounded corners */
+    height: 150px;           /* Increased height for better image display */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    perspective: 1000px;
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.card.flipped .card-front {
+    transform: rotateY(0);
+}
+
+.card.flipped .card-back {
+    transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+    border-radius: 5px; /* Keep rounded corners */
+    transition: transform 0.5s;
+}
+
+.card-front {
+    background-color: #fff; /* White background for the front */
+    transform: rotateY(180deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-back {
+    background-color: black; /* Keep the back background black */
+    color: #fff; /* White text color */
+    transform: rotateY(0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    border: 2px solid red; /* Red border for the back as well */
+}
+
+/* Ensure images fit properly inside the card */
+.card-front img {
+    width: 100%; /* Make sure the image fits the entire card */
+    height: 100%;
+    object-fit: cover; /* Maintain aspect ratio, cropping if necessary */
+    border-radius: 5px; /* Round the corners */
+}
+
+.card-back img {
+    width: 50%; /* Adjust logo size */
+    height: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Fit within card while maintaining aspect ratio */
+}
+
+.endgame-message {
+    display: none; /* Hide by default */
+    margin-top: 20px;
+}
+
+/* Button styling */
+button {
+    padding: 12px 25px;
+    background-color: #ffcc00; /* Button background color */
+    color: #1c1c1c; /* Darker text for contrast */
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Button hover and click transitions */
+}
+
+/* Button hover and active state */
+button:hover {
+    background-color: #ffd700; /* Darker gold on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+button:active {
+    background-color: #ffc700; /* Slightly darker on click */
+    transform: scale(0.98); /* Slightly shrink on click */
+}
+.feedback-section {
+    margin-top: 20px;
+    background-color: #383838;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+#feedback {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
