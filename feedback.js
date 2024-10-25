@@ -1,39 +1,27 @@
 document.getElementById('send-feedback-btn').addEventListener('click', function() {
+    const email = document.getElementById('email').value;
+    const name = document.getElementById('name').value;
     const feedbackText = document.getElementById('feedback').value;
-    const userName = document.getElementById('name').value; // Get user name
-    
-    if (userName.trim() === "" || feedbackText.trim() === "") {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Please provide both name and feedback before sending.'
-        });
+
+    if (feedbackText.trim() === "" || email.trim() === "") {
+        alert("Please provide your email and feedback.");
         return;
     }
 
     const templateParams = {
-        name: userName,  // Add the name to the parameters
+        email: email,
+        name: name,
         feedback: feedbackText,
         gameId: "Memory Game"
     };
 
-    // Send feedback using EmailJS
     emailjs.send('service_mlrua6s', 'template_wcveen7', templateParams)
         .then(function(response) {
-            console.log('SUCCESS!', response.status, response.text);
-            Swal.fire({
-                icon: 'success',
-                title: 'Thank you!',
-                text: 'Your feedback has been sent successfully.',
-            });
-            document.getElementById('name').value = ""; // Clear name input
-            document.getElementById('feedback').value = ""; // Clear feedback textarea
+            Swal.fire("Success!", "Feedback sent successfully!", "success");
+            document.getElementById('email').value = "";
+            document.getElementById('name').value = "";
+            document.getElementById('feedback').value = "";
         }, function(error) {
-            console.log('FAILED...', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Failed',
-                text: 'There was an error sending your feedback. Please try again later.'
-            });
+            Swal.fire("Error!", "There was an error sending your feedback.", "error");
         });
 });
