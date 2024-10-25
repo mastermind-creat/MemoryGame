@@ -1,49 +1,81 @@
 document.addEventListener('DOMContentLoaded', () => {
     const cardsArray = [
         { name: 'image1', img: 'images/img1.jpg' },
-        { name: 'image1', img: 'images/img1.jpg' },
-        { name: 'image2', img: 'images/img2.jpg' },
         { name: 'image2', img: 'images/img2.jpg' },
         { name: 'image3', img: 'images/img3.jpg' },
-        { name: 'image3', img: 'images/img3.jpg' },
-        { name: 'image4', img: 'images/img4.jpg' },
         { name: 'image4', img: 'images/img4.jpg' },
         { name: 'image5', img: 'images/img5.jpg' },
-        { name: 'image5', img: 'images/img5.jpg' },
         { name: 'image6', img: 'images/img6.jpg' },
-        { name: 'image6', img: 'images/img6.jpg' },
-        { name: 'image7', img: 'images/img7.jpg' },
         { name: 'image7', img: 'images/img7.jpg' },
         { name: 'image8', img: 'images/img8.jpg' },
-        { name: 'image8', img: 'images/img8.jpg' }
+        { name: 'image9', img: 'images/img9.jpg' },
+        { name: 'image10', img: 'images/img10.jpg' },
+        { name: 'image11', img: 'images/img11.jpg' },
+        { name: 'image12', img: 'images/img12.jpg' }
     ];
 
-    // Audio Files
     const flipSound = new Audio('audio/flip.wav');
     const matchSound = new Audio('audio/match.wav');
     const winSound = new Audio('audio/win.mp3');
+    const backgroundMusic = new Audio('audio/background.mp3');
 
-    // Game Variables
+    backgroundMusic.loop = true; // Enable looping
+    backgroundMusic.volume = 0.5; // Adjust volume if needed
+
     let moves = 0;
     let matchedPairs = 0;
     let firstCard, secondCard;
-    let timer;
-    let timeElapsed = 0;
+    let countdownTimer;
+    let countdownTime = 30; // Start countdown time
     let gameStarted = false;
+    let currentLevel = 1;
+    const levels = {
+        1: { pairs: 8, time: 30 },
+        2: { pairs: 10, time: 28 },
+        3: { pairs: 12, time: 26 },
+        4: { pairs: 14, time: 24 },
+        5: { pairs: 16, time: 22 } // Level 5 with 16 pairs
+    };
 
     const memoryGrid = document.querySelector('.memory-grid');
     const moveCounter = document.getElementById('move-counter');
     const timerDisplay = document.getElementById('timer');
     const endgameMessage = document.getElementById('endgame-message');
-    const restartButton = document.getElementById('restart-btn');
+    const startButton = document.getElementById('start-btn');
+    const levelDisplay = document.getElementById('current-level');
 
-    // Shuffle the cards and generate the grid
     function initializeGame() {
-        const shuffledCards = shuffle(cardsArray);
+        winSound.pause();
+        winSound.currentTime = 0;
+
+        const numberOfCards = levels[currentLevel].pairs;
+        countdownTime = levels[currentLevel].time; // Set countdown time based on current level
+        const selectedCards = cardsArray.slice(0, numberOfCards / 2);
+        const cardsToPlay = [...selectedCards, ...selectedCards];
+        const shuffledCards = shuffle(cardsToPlay);
+        memoryGrid.innerHTML = '';
         shuffledCards.forEach(card => {
             const cardElement = createCardElement(card);
             memoryGrid.appendChild(cardElement);
         });
+        updateLevelDisplay();
+        resetGameVariables();
+    }
+
+    function updateLevelDisplay() {
+        levelDisplay.textContent = currentLevel;
+    }
+
+    function resetGameVariables() {
+        moves = 0;
+        matchedPairs = 0;
+        firstCard = null;
+        secondCard = null;
+        moveCounter.textContent = moves;
+        clearInterval(countdownTimer);
+        timerDisplay.textContent = formatTime(countdownTime);
+        timerDisplay.classList.remove('danger', 'flash-animation');
+        gameStarted = false;
     }
 
     function createCardElement(card) {
@@ -57,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const cardBack = document.createElement('div');
         cardBack.classList.add('card-back');
-        cardBack.innerHTML = `<img src="images/logo.jpg" alt="PlayStation Logo">`; // Use PlayStation logo image
+        cardBack.innerHTML = `<img src="images/logo.jpg" alt="PlayStation Logo">`;
 
         cardDiv.appendChild(cardFront);
         cardDiv.appendChild(cardBack);
@@ -67,15 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleCardClick(event) {
+        if (!gameStarted) return;
+
         const clickedCard = event.target.closest('.card');
-
-        if (!gameStarted) {
-            startTimer();
-            gameStarted = true;
-        }
-
         if (!clickedCard.classList.contains('flipped') && !secondCard) {
-            flipSound.play(); // Play flip sound
+            flipSound.play();
             clickedCard.classList.add('flipped');
             if (!firstCard) {
                 firstCard = clickedCard;
@@ -91,10 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
         moveCounter.textContent = moves;
         if (firstCard.dataset.name === secondCard.dataset.name) {
             matchedPairs++;
-            matchSound.play(); // Play match sound
+            matchSound.play();
             resetSelection();
-            if (matchedPairs === cardsArray.length / 2) {
-                endGame();
+            if (matchedPairs === levels[currentLevel].pairs / 2) {
+                completeLevel();
             }
         } else {
             setTimeout(() => {
@@ -118,44 +146,88 @@ document.addEventListener('DOMContentLoaded', () => {
         return array;
     }
 
-    function startTimer() {
-        timer = setInterval(() => {
-            timeElapsed++;
-            const minutes = Math.floor(timeElapsed / 60);
-            const seconds = timeElapsed % 60;
-            timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    function startCountdown() {
+        timerDisplay.textContent = formatTime(countdownTime);
+        countdownTimer = setInterval(() => {
+            countdownTime--;
+            updateTimerDisplay();
+            if (countdownTime <= 0) {
+                clearInterval(countdownTimer);
+                endGame(false);
+            }
         }, 1000);
     }
 
-    function endGame() {
-        clearInterval(timer);
-        winSound.play(); // Play win sound
-        createConfettiOnGameEnd(); // Trigger confetti effect on game end
-        endgameMessage.style.display = 'block';
+    function updateTimerDisplay() {
+        timerDisplay.textContent = formatTime(countdownTime);
+
+        if (countdownTime <= 5) {
+            timerDisplay.classList.add('danger', 'flash-animation');
+        } else {
+            timerDisplay.classList.remove('danger', 'flash-animation');
+        }
     }
 
-    restartButton.addEventListener('click', () => {
-        // Stop the win sound if it's playing
-        winSound.pause();
-        winSound.currentTime = 0; // Reset the audio to the start
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes < 10 ? '0' : ''}${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
 
-        // Clear the memory grid and reinitialize the game
-        memoryGrid.innerHTML = '';
-        initializeGame();
-        
-        // Reset game variables
-        moves = 0;
-        matchedPairs = 0;
-        firstCard = null;
-        secondCard = null;
-        moveCounter.textContent = moves;
-        timerDisplay.textContent = '00:00';
-        endgameMessage.style.display = 'none';
-        gameStarted = false;
-        timeElapsed = 0;
+    function completeLevel() {
+        clearInterval(countdownTimer);
+        winSound.currentTime = 0;
+        winSound.play();
+        createConfettiOnGameEnd();
 
-        // Clear any existing timer
-        clearInterval(timer);
+        Swal.fire({
+            title: `Level ${currentLevel} Complete!`,
+            text: "Proceed to the next level?",
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                currentLevel++;
+                if (currentLevel <= Object.keys(levels).length) {
+                    initializeGame();
+                } else {
+                    endgameMessage.style.display = 'block';
+                }
+            } else {
+                endgameMessage.style.display = 'block';
+            }
+        });
+    }
+
+    function endGame(win) {
+        clearInterval(countdownTimer);
+        Swal.fire({
+            title: win ? 'Congratulations!' : 'Time’s Up!',
+            text: win ? 'You completed all levels!' : 'Try again or end game?',
+            icon: win ? 'success' : 'error',
+            showCancelButton: !win,
+            confirmButtonText: win ? 'Play Again' : 'Retry',
+            cancelButtonText: 'End'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                initializeGame();
+            } else if (!win) {
+                endgameMessage.style.display = 'block';
+            }
+        });
+    }
+
+    startButton.addEventListener('click', () => {
+        if (!gameStarted) {
+            gameStarted = true;
+            startCountdown();
+            // Start background music on first start
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+            }
+        }
     });
 
     initializeGame();
