@@ -29,9 +29,59 @@ header:hover {
     transform: scale(1.05); /* Slightly enlarge header on hover */
 }
 
-header h1 {
+/* header h1 {
     font-size: 2rem;
     margin-bottom: 20px;
+} */
+
+.game-title {
+    font-size: 3.5rem; /* Enhanced size for prominence */
+    font-family: 'Poppins', sans-serif; /* Modern font */
+    margin-bottom: 20px;
+    text-align: center;
+    letter-spacing: 2px; /* Spacing between letters for a clean look */
+    
+    /* Gradient color for a dynamic look */
+    background: linear-gradient(45deg, #ff0000, #ffeb3b); /* Red to yellow */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* 3D Effect with color shadow */
+    text-shadow:
+        3px 3px 4px rgba(0, 0, 0, 0.3), /* Soft dark shadow for depth */
+        -1px -1px 2px rgba(255, 255, 255, 0.5), /* Light top shadow for shine */
+        0 0 15px rgba(255, 0, 0, 0.7); /* Red glow around the text */
+    
+    /* Animation */
+    animation: glow 2s infinite alternate, float 3s ease-in-out infinite;
+}
+
+/* Glow effect animation */
+@keyframes glow {
+    from {
+        text-shadow:
+            3px 3px 4px rgba(0, 0, 0, 0.3),
+            -1px -1px 2px rgba(255, 255, 255, 0.5),
+            0 0 20px rgba(255, 0, 0, 0.8),
+            0 0 30px rgba(255, 235, 59, 0.6); /* Red to yellow glow */
+    }
+    to {
+        text-shadow:
+            3px 3px 4px rgba(0, 0, 0, 0.3),
+            -1px -1px 2px rgba(255, 255, 255, 0.5),
+            0 0 25px rgba(255, 0, 0, 1),
+            0 0 35px rgba(255, 235, 59, 0.9); /* Red to yellow glow */
+    }
+}
+
+/* Float effect for a gentle up and down movement */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 #confetti-canvas {
@@ -191,3 +241,22 @@ button:active {
     border-radius: 5px;
     border: 1px solid #ccc;
 }
+#timer {
+    font-size: 24px; /* Adjust size as needed */
+    color: #ffcc00; /* Timer color */
+    font-weight: bold;
+}
+#timer.danger {
+    color: red;
+    font-weight: bold;
+}
+
+.flash-animation {
+    animation: flash 1s infinite;
+}
+
+@keyframes flash {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+        }
