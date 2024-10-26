@@ -135,41 +135,69 @@ header:hover {
 
 /* Modal Styling */
 .modal-content {
-    background-color: #1c1c1c; /* Dark background for modern look */
-    border-radius: 8px;
+    background-color: #1c1c1c; /* Dark background */
+    border-radius: 12px;
     border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Subtle shadow effect */
-    color: #fff; /* White text for contrast */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); /* Stronger shadow */
+    color: #fff;
+    transform: translateY(-50px);
+    opacity: 0;
+    animation: slideIn 0.5s ease forwards, glow 2s infinite alternate; /* Slide and glow animations */
+}
+
+/* Animation for modal appearance */
+@keyframes slideIn {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Glow effect around the modal */
+@keyframes glow {
+    from {
+        box-shadow: 0 0 15px rgba(255, 235, 59, 0.6);
+    }
+    to {
+        box-shadow: 0 0 35px rgba(255, 235, 59, 0.9);
+    }
 }
 
 .modal-header {
     border-bottom: none; /* Remove default border */
+    padding: 1rem 2rem;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    background-color: #282828;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    transition: all 0.3s ease;
 }
 
 .modal-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #f9f9f9; /* Light color for the title */
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffcc00; /* Bright yellow for attention */
 }
 
 .modal-body {
-    font-size: 1rem;
-    color: #e0e0e0; /* Softer text color */
-    line-height: 1.6;
+    padding: 2rem;
+    font-size: 1.1rem;
+    color: #dcdcdc; /* Softer text color */
+    line-height: 1.8;
+    background-color: #1e1e1e;
+    transition: all 0.3s ease;
 }
 
 .modal-body h6 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     color: #f4f4f4;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
 }
 
 .modal-body p, .modal-body ul {
-    margin-left: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .modal-body ul {
@@ -181,40 +209,48 @@ header:hover {
     content: "\f058"; /* Check-circle icon */
     font-family: 'Bootstrap Icons';
     margin-right: 10px;
-    color: #28a745; /* Green color for icons */
+    color: #28a745; /* Green icon color */
+    font-size: 1.25rem;
 }
 
 .modal-footer {
-    border-top: none; /* Remove default border */
+    border-top: none;
+    padding: 1rem 2rem;
     justify-content: center;
+    background-color: #282828;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
 }
 
 .modal-footer .btn-secondary {
-    background-color: #f44336;
+    background-color: #ffcc00; /* Bright yellow button */
     border: none;
     font-size: 1rem;
-    padding: 10px 20px;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+    padding: 12px 30px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    color: #1c1c1c; /* Dark text for contrast */
 }
 
 .modal-footer .btn-secondary:hover {
-    background-color: #d32f2f; /* Darker red on hover */
+    background-color: #ffd700; /* Lighter yellow on hover */
+    transform: scale(1.05); /* Enlarge on hover */
 }
 
 .close {
     font-size: 1.5rem;
-    color: #fff;
+    color: #ff5252; /* Red color for close icon */
     opacity: 1;
+    transition: color 0.3s ease;
 }
 
 .close:hover {
-    color: #ff5252; /* Bright red on hover */
+    color: #ff0000; /* Darker red on hover */
 }
 
 .modal-body h6 {
     position: relative;
-    padding-left: 25px;
+    padding-left: 30px;
 }
 
 .modal-body h6::before {
@@ -223,14 +259,58 @@ header:hover {
     position: absolute;
     left: 0;
     top: 0;
-    color: #ffdf00; /* Yellow color for icons */
+    color: #ffdf00; /* Yellow color for icon */
+}
+
+/* Button Animations */
+button {
+    padding: 12px 25px;
+    background-color: #ffcc00; /* Button background color */
+    color: #1c1c1c; /* Dark text */
+    border: none;
+    cursor: pointer;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Button hover and active state */
+button:hover {
+    background-color: #ffd700;
+    transform: scale(1.05);
+}
+
+button:active {
+    background-color: #ffc700;
+    transform: scale(0.98);
 }
 
 @media (max-width: 576px) {
     .modal-content {
-        padding: 20px; /* Extra padding for small screens */
+        padding: 20px;
+    }
+    .modal-title {
+        font-size: 1.75rem; /* Slightly smaller on mobile */
+    }
+    .modal-footer .btn-secondary {
+        padding: 10px 20px;
+        font-size: 0.9rem;
     }
 }
+
+/* Close button animation */
+.close {
+    font-size: 1.5rem;
+    color: #ff5252;
+    opacity: 1;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #ff0000;
+    }
 .card {
     background-color: black; /* Black background */
     border: 0.5px solid yellow;   /* Red border */
