@@ -133,6 +133,104 @@ header:hover {
     gap: 10px;
 }
 
+/* Modal Styling */
+.modal-content {
+    background-color: #1c1c1c; /* Dark background for modern look */
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Subtle shadow effect */
+    color: #fff; /* White text for contrast */
+}
+
+.modal-header {
+    border-bottom: none; /* Remove default border */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #f9f9f9; /* Light color for the title */
+}
+
+.modal-body {
+    font-size: 1rem;
+    color: #e0e0e0; /* Softer text color */
+    line-height: 1.6;
+}
+
+.modal-body h6 {
+    font-size: 1.25rem;
+    color: #f4f4f4;
+    margin-top: 1rem;
+}
+
+.modal-body p, .modal-body ul {
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.modal-body ul {
+    list-style: none;
+    padding: 0;
+}
+
+.modal-body ul li::before {
+    content: "\f058"; /* Check-circle icon */
+    font-family: 'Bootstrap Icons';
+    margin-right: 10px;
+    color: #28a745; /* Green color for icons */
+}
+
+.modal-footer {
+    border-top: none; /* Remove default border */
+    justify-content: center;
+}
+
+.modal-footer .btn-secondary {
+    background-color: #f44336;
+    border: none;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
+
+.close {
+    font-size: 1.5rem;
+    color: #fff;
+    opacity: 1;
+}
+
+.close:hover {
+    color: #ff5252; /* Bright red on hover */
+}
+
+.modal-body h6 {
+    position: relative;
+    padding-left: 25px;
+}
+
+.modal-body h6::before {
+    content: "\f3a5"; /* Icon for headings */
+    font-family: 'Bootstrap Icons';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #ffdf00; /* Yellow color for icons */
+}
+
+@media (max-width: 576px) {
+    .modal-content {
+        padding: 20px; /* Extra padding for small screens */
+    }
+}
 .card {
     background-color: black; /* Black background */
     border: 0.5px solid yellow;   /* Red border */
