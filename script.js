@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const cardBack = document.createElement('div');
         cardBack.classList.add('card-back');
-        cardBack.innerHTML = `<img src="images/logo.jpg" alt="PlayStation Logo">`;
+        cardBack.innerHTML = `<img src="images/f18d2f9782a9b7a4deaa3cb49c6b029d.jpg" alt="PlayStation Logo">`;
 
         cardDiv.appendChild(cardFront);
         cardDiv.appendChild(cardBack);
