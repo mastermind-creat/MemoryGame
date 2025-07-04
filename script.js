@@ -14,43 +14,77 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'image12', img: 'images/img12.jpg' }
     ];
 
-    const flipSound = new Audio('audio/flip.wav');
-    const matchSound = new Audio('audio/match.wav');
-    const winSound = new Audio('audio/win.mp3');
-    const backgroundMusic = new Audio('audio/background.mp3');
+    // Load audio with error handling
+    const loadAudio = (src) => {
+        try {
+            const audio = new Audio(src);
+            audio.onerror = () => console.error(`Failed to load audio: ${src}`);
+            return audio;
+        } catch (e) {
+            console.error(`Error creating audio for ${src}: ${e}`);
+            return null;
+        }
+    };
 
-    backgroundMusic.loop = true; // Enable looping
-    backgroundMusic.volume = 0.5; // Adjust volume if needed
+    const flipSound = loadAudio('audio/flip.wav');
+    const matchSound = loadAudio('audio/match.wav');
+    const winSound = loadAudio('audio/win.mp3');
+    const backgroundMusic = loadAudio('audio/background.mp3');
+
+    if (backgroundMusic) {
+        backgroundMusic.loop = true;
+        backgroundMusic.volume = 0.5;
+    }
 
     let moves = 0;
     let matchedPairs = 0;
+    let score = 0; // New: Scoring system
     let firstCard, secondCard;
     let countdownTimer;
-    let countdownTime = 30; // Start countdown time
+    let countdownTime = 30;
     let gameStarted = false;
+    let isPaused = false; // New: Pause state
     let currentLevel = 1;
+    // Extended levels with varied durations and pairs
     const levels = {
-        1: { pairs: 8, time: 30 },
-        2: { pairs: 10, time: 28 },
-        3: { pairs: 12, time: 26 },
-        4: { pairs: 14, time: 24 },
-        5: { pairs: 16, time: 22 } // Level 5 with 16 pairs
+        1: { pairs: 8, time: 40, scoreBase: 100 },
+        2: { pairs: 10, time: 38, scoreBase: 150 },
+        3: { pairs: 12, time: 35, scoreBase: 200 },
+        4: { pairs: 14, time: 32, scoreBase: 250 },
+        5: { pairs: 16, time: 30, scoreBase: 300 },
+        6: { pairs: 18, time: 28, scoreBase: 350 },
+        7: { pairs: 20, time: 25, scoreBase: 400 },
+        8: { pairs: 22, time: 22, scoreBase: 450 } // New: Extended to 8 levels
     };
 
     const memoryGrid = document.querySelector('.memory-grid');
     const moveCounter = document.getElementById('move-counter');
     const timerDisplay = document.getElementById('timer');
+    const scoreDisplay = document.getElementById('score'); // New: Score display (add to HTML)
     const endgameMessage = document.getElementById('endgame-message');
     const startButton = document.getElementById('start-btn');
+    const pauseButton = document.getElementById('pause-btn'); // New: Pause button (add to HTML)
     const levelDisplay = document.getElementById('current-level');
 
+    // Load high score from localStorage
+    let highScore = localStorage.getItem('highScore') ? parseInt(localStorage.getItem('highScore')) : 0;
+    const highScoreDisplay = document.getElementById('high-score'); // New: High score display (add to HTML)
+    if (highScoreDisplay) highScoreDisplay.textContent = highScore;
+
     function initializeGame() {
-        winSound.pause();
-        winSound.currentTime = 0;
+        if (winSound) {
+            winSound.pause();
+            winSound.currentTime = 0;
+        }
 
         const numberOfCards = levels[currentLevel].pairs;
-        countdownTime = levels[currentLevel].time; // Set countdown time based on current level
+        countdownTime = levels[currentLevel].time;
         const selectedCards = cardsArray.slice(0, numberOfCards / 2);
+        if (selectedCards.length < numberOfCards / 2) {
+            console.error('Not enough card images for level', currentLevel);
+            Swal.fire('Error', 'Not enough card images for this level!', 'error');
+            return;
+        }
         const cardsToPlay = [...selectedCards, ...selectedCards];
         const shuffledCards = shuffle(cardsToPlay);
         memoryGrid.innerHTML = '';
@@ -60,10 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         updateLevelDisplay();
         resetGameVariables();
+        updateGridLayout(numberOfCards); // New: Adjust grid layout
     }
 
     function updateLevelDisplay() {
         levelDisplay.textContent = currentLevel;
+        if (scoreDisplay) scoreDisplay.textContent = score;
     }
 
     function resetGameVariables() {
@@ -72,38 +108,62 @@ document.addEventListener('DOMContentLoaded', () => {
         firstCard = null;
         secondCard = null;
         moveCounter.textContent = moves;
+        if (scoreDisplay) scoreDisplay.textContent = score;
         clearInterval(countdownTimer);
         timerDisplay.textContent = formatTime(countdownTime);
         timerDisplay.classList.remove('danger', 'flash-animation');
         gameStarted = false;
+        isPaused = false;
+        if (pauseButton) pauseButton.textContent = 'Pause';
+    }
+
+    // New: Dynamic grid layout for responsiveness
+    function updateGridLayout(numberOfCards) {
+        const columns = Math.ceil(Math.sqrt(numberOfCards));
+        memoryGrid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
     }
 
     function createCardElement(card) {
         const cardDiv = document.createElement('div');
         cardDiv.classList.add('card');
         cardDiv.dataset.name = card.name;
+        cardDiv.setAttribute('tabindex', '0'); // Accessibility: Make focusable
+        cardDiv.setAttribute('aria-label', `Card ${card.name}`); // Accessibility: Screen reader support
 
         const cardFront = document.createElement('div');
         cardFront.classList.add('card-front');
-        cardFront.innerHTML = `<img src="${card.img}" alt="${card.name}">`;
+        const frontImg = document.createElement('img');
+        frontImg.src = card.img;
+        frontImg.alt = card.name;
+        frontImg.onerror = () => {
+            console.error(`Failed to load image: ${card.img}`);
+            frontImg.src = 'images/fallback.jpg'; // Fallback image
+        };
+        cardFront.appendChild(frontImg);
 
         const cardBack = document.createElement('div');
         cardBack.classList.add('card-back');
-        cardBack.innerHTML = `<img src="images/f18d2f9782a9b7a4deaa3cb49c6b029d.jpg" alt="PlayStation Logo">`;
+        const backImg = document.createElement('img');
+        backImg.src = 'images/f18d2f9782a9b7a4deaa3cb49c6b029d.jpg';
+        backImg.alt = 'PlayStation Logo';
+        cardBack.appendChild(backImg);
 
         cardDiv.appendChild(cardFront);
         cardDiv.appendChild(cardBack);
         cardDiv.addEventListener('click', handleCardClick);
+        cardDiv.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') handleCardClick(e); // Accessibility: Keyboard support
+        });
 
         return cardDiv;
     }
 
     function handleCardClick(event) {
-        if (!gameStarted) return;
+        if (!gameStarted || isPaused) return;
 
         const clickedCard = event.target.closest('.card');
         if (!clickedCard.classList.contains('flipped') && !secondCard) {
-            flipSound.play();
+            if (flipSound) flipSound.play();
             clickedCard.classList.add('flipped');
             if (!firstCard) {
                 firstCard = clickedCard;
@@ -119,7 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
         moveCounter.textContent = moves;
         if (firstCard.dataset.name === secondCard.dataset.name) {
             matchedPairs++;
-            matchSound.play();
+            if (matchSound) matchSound.play();
+            // New: Add score for match (base score per match)
+            score += 50;
+            if (scoreDisplay) scoreDisplay.textContent = score;
             resetSelection();
             if (matchedPairs === levels[currentLevel].pairs / 2) {
                 completeLevel();
@@ -149,18 +212,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function startCountdown() {
         timerDisplay.textContent = formatTime(countdownTime);
         countdownTimer = setInterval(() => {
-            countdownTime--;
-            updateTimerDisplay();
-            if (countdownTime <= 0) {
-                clearInterval(countdownTimer);
-                endGame(false);
+            if (!isPaused) {
+                countdownTime--;
+                updateTimerDisplay();
+                if (countdownTime <= 0) {
+                    clearInterval(countdownTimer);
+                    endGame(false);
+                }
             }
         }, 1000);
     }
 
     function updateTimerDisplay() {
         timerDisplay.textContent = formatTime(countdownTime);
-
         if (countdownTime <= 5) {
             timerDisplay.classList.add('danger', 'flash-animation');
         } else {
@@ -176,13 +240,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function completeLevel() {
         clearInterval(countdownTimer);
-        winSound.currentTime = 0;
-        winSound.play();
+        if (winSound) {
+            winSound.currentTime = 0;
+            winSound.play();
+        }
+        // New: Add level completion bonus (base score + time bonus)
+        score += levels[currentLevel].scoreBase + countdownTime * 10;
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('highScore', highScore);
+            if (highScoreDisplay) highScoreDisplay.textContent = highScore;
+        }
         createConfettiOnGameEnd();
 
         Swal.fire({
             title: `Level ${currentLevel} Complete!`,
-            text: "Proceed to the next level?",
+            text: `Score: ${score}. Proceed to the next level?`,
             icon: 'success',
             showCancelButton: true,
             confirmButtonText: 'Yes',
@@ -193,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentLevel <= Object.keys(levels).length) {
                     initializeGame();
                 } else {
-                    endgameMessage.style.display = 'block';
+                    endGame(true);
                 }
             } else {
                 endgameMessage.style.display = 'block';
@@ -205,16 +278,37 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(countdownTimer);
         Swal.fire({
             title: win ? 'Congratulations!' : 'Time’s Up!',
-            text: win ? 'You completed all levels!' : 'Try again or end game?',
+            text: win ? `You completed all levels! Final Score: ${score}` : 'Try again or end game?',
             icon: win ? 'success' : 'error',
             showCancelButton: !win,
             confirmButtonText: win ? 'Play Again' : 'Retry',
             cancelButtonText: 'End'
         }).then((result) => {
             if (result.isConfirmed) {
+                score = 0; // Reset score
+                currentLevel = 1; // Restart from level 1
                 initializeGame();
             } else if (!win) {
                 endgameMessage.style.display = 'block';
+            }
+        });
+    }
+
+    // New: Pause functionality
+    if (pauseButton) {
+        pauseButton.addEventListener('click', () => {
+            if (gameStarted) {
+                isPaused = !isPaused;
+                pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+                if (isPaused && backgroundMusic) backgroundMusic.pause();
+                else if (!isPaused && backgroundMusic) backgroundMusic.play();
+                Swal.fire({
+                    title: isPaused ? 'Game Paused' : 'Game Resumed',
+                    text: isPaused ? 'Press Resume to continue' : '',
+                    icon: 'info',
+                    timer: isPaused ? null : 1000,
+                    showConfirmButton: isPaused
+                });
             }
         });
     }
@@ -223,12 +317,35 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!gameStarted) {
             gameStarted = true;
             startCountdown();
-            // Start background music on first start
-            if (backgroundMusic.paused) {
-                backgroundMusic.play();
+            if (backgroundMusic && backgroundMusic.paused) {
+                backgroundMusic.play().catch(e => console.error('Background music failed to play:', e));
             }
         }
     });
+
+    // Add this after DOMContentLoaded and after all other event listeners
+    const playAgainButton = document.getElementById('startButton');
+    if (playAgainButton) {
+        playAgainButton.addEventListener('click', () => {
+            score = 0;
+            currentLevel = 1;
+            if (scoreDisplay) scoreDisplay.textContent = score;
+            if (levelDisplay) levelDisplay.textContent = currentLevel;
+            endgameMessage.style.display = 'none';
+            initializeGame();
+            // Optionally show a Bootstrap alert for feedback
+            if (window.jQuery) {
+                $('.game-container').prepend(`
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        Game restarted! Good luck!
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                `);
+            }
+        });
+    }
 
     initializeGame();
 });
