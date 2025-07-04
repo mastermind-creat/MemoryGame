@@ -437,4 +437,108 @@ button:active {
     0% { opacity: 1; }
     50% { opacity: 0.5; }
     100% { opacity: 1; }
-        }
+}
+
+/* Style for score and high-score displays */
+.score, .high-score {
+    display: flex;
+    align-items: center;
+    color: #ffcc00;
+    font-size: 18px;
+}
+
+.score i, .high-score i {
+    margin-right: 8px;
+}
+
+/* Responsive grid for varying card counts */
+.memory-grid {
+    display: grid;
+    gap: 10px;
+    justify-content: center;
+    grid-template-columns: repeat(4, 1fr); /* Default for level 1 */
+}
+
+@media (max-width: 576px) {
+    .card {
+        width: 80px;
+        height: 80px;
+    }
+    .memory-grid {
+        gap: 5px;
+    }
+}
+
+/* Ensure card images are responsive */
+.card-front img, .card-back img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.card-back img {
+    width: 50%;
+    height: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Fit within card while maintaining aspect ratio */
+}
+
+header.animated-header {
+    margin-bottom: 30px;
+    padding: 30px 20px 24px 20px;
+    background: linear-gradient(90deg, #282828 60%, #3a2c00 100%);
+    border-radius: 18px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+    transition: box-shadow 0.3s, transform 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+header .stats {
+    background: rgba(44, 44, 44, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(255, 204, 0, 0.08);
+    padding: 18px 24px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 32px;
+    justify-content: center;
+    width: 100%;
+    max-width: 700px;
+}
+
+header .stats > div {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 8px 16px;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.08rem;
+    font-weight: 500;
+    box-shadow: 0 1px 4px rgba(255, 204, 0, 0.04);
+}
+
+header button {
+    margin: 0 8px 0 0;
+    min-width: 120px;
+}
+
+@media (max-width: 768px) {
+    header.animated-header {
+        padding: 18px 8px 16px 8px;
+    }
+    header .stats {
+        flex-direction: column;
+        gap: 10px 0;
+        padding: 12px 8px;
+    }
+    header button {
+        min-width: 90px;
+        font-size: 0.95rem;
+    }
+}
