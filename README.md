@@ -76,4 +76,4 @@ memory-game/
 1. Create an [EmailJS](https://www.emailjs.com/) account to enable feedback emails.
 2. In `index.html`, ensure EmailJS is initialized with your user ID:
    ```javascript
-   emailjs.init("qU2NlZClNfJyjoXMz");
+   emailjs.init("YOUR_USER_ID")
