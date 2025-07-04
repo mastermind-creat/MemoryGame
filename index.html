@@ -26,11 +26,18 @@
                     <i class="bi bi-arrow-right-circle"></i> Moves: <span id="move-counter">0</span>
                 </div>
                 <div class="timer" id="timer-warning">
-                    <i class="bi bi-clock"></i>    <span id="timer">00:00</span>
+                    <i class="bi bi-clock"></i> <span id="timer">00:00</span>
                 </div>
                 <div id="level-display">Level: <span id="current-level">1</span></div>
+                <div class="score">
+                    <i class="bi bi-star-fill"></i> Score: <span id="score">0</span>
+                </div>
+                <div class="high-score">
+                    <i class="bi bi-trophy"></i> High Score: <span id="high-score">0</span>
+                </div>
             </div>
             <button id="start-btn" class="btn btn-secondary mt-3">Start Game</button>
+            <button id="pause-btn" class="btn btn-secondary mt-3">Pause</button>
             <button id="help-btn" class="btn btn-info mt-3" data-toggle="modal" data-target="#helpModal">Help</button>
         </header>
         
@@ -58,7 +65,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="helpModalLabel">How to Play</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -66,16 +73,19 @@
                     <p>Match all the pairs of cards on the grid before time runs out.</p>
                     <h6>How to Play:</h6>
                     <ul>
-                        <li>Click any two cards to flip them over.</li>
+                        <li>Click or tap two cards to flip them over.</li>
                         <li>If the cards match, they stay flipped. If they don't match, they flip back after a short time.</li>
                         <li>Continue matching pairs until all cards are matched to complete the level.</li>
+                        <li>Use the Pause button to pause the game.</li>
                     </ul>
+                    <h6>Scoring:</h6>
+                    <p>Earn 50 points per match, plus a level completion bonus based on time remaining.</p>
                     <h6>Levels:</h6>
-                    <p>The game starts at Level 1 with 8 pairs of cards. As you progress, more pairs are added, and the time is reduced.</p>
+                    <p>Start at Level 1 with 8 pairs. Higher levels have more pairs and less time.</p>
                     <h6>Winning & Losing:</h6>
                     <ul>
-                        <li>If you match all pairs within the time limit, you win the level and move to the next one.</li>
-                        <li>If time runs out, you lose, but you can retry the level.</li>
+                        <li>Match all pairs within the time limit to advance.</li>
+                        <li>If time runs out, retry the level or end the game.</li>
                     </ul>
                 </div>
                 <div class="modal-footer">
@@ -92,4 +102,4 @@
     <script src="confetti.js"></script>
     <script src="feedback.js"></script>
 </body>
-    </html>
+</html>
